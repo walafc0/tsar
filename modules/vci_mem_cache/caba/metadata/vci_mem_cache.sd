@@ -1,0 +1,77 @@
+
+# -*- python -*-
+
+__id__ = "$Id: vci_mem_cache.sd 295 2013-02-14 15:05:05Z cfuguet $"
+__version__ = "$Revision: 295 $"
+
+Module('caba:vci_mem_cache',
+        classname = 'soclib::caba::VciMemCache',
+
+        tmpl_parameters = [
+            parameter.Module('vci_param_int', default = 'caba:vci_param',
+                cell_size = parameter.Reference('memc_cell_size_int')
+            ),
+            parameter.Module('vci_param_ext', default = 'caba:vci_param',
+                cell_size = parameter.Reference('memc_cell_size_ext')
+            ),
+            parameter.Int('memc_dspin_in_width'),
+            parameter.Int('memc_dspin_out_width'),
+        ],
+
+        header_files = [
+            '../source/include/vci_mem_cache.h',
+            '../source/include/xram_transaction.h',
+            '../source/include/mem_cache_directory.h',
+            '../source/include/update_tab.h'
+        ],
+
+        interface_files = [
+            '../../include/soclib/mem_cache.h', 
+        ],
+
+        implementation_files = [
+            '../source/src/vci_mem_cache.cpp'
+        ],
+
+        uses = [
+            Uses('caba:base_module'),
+            Uses('common:loader'),
+            Uses('common:mapping_table'),
+            Uses('caba:generic_fifo'),
+            Uses('caba:generic_llsc_global_table'),
+            Uses('caba:dspin_dhccp_param')
+        ],
+
+        ports = [
+            Port('caba:clock_in'     , 'p_clk'      , auto = 'clock' ),
+            Port('caba:bit_in'       , 'p_resetn'   , auto = 'resetn'),
+            Port('caba:vci_target'   , 'p_vci_tgt'),
+            Port('caba:vci_initiator', 'p_vci_ixr'),
+            Port('caba:dspin_input',
+                'p_dspin_p2m',
+                dspin_data_size = parameter.Reference('memc_dspin_in_width')
+            ),
+            Port('caba:dspin_output',
+                'p_dspin_m2p',
+                dspin_data_size = parameter.Reference('memc_dspin_out_width')
+            ),
+            Port('caba:dspin_output',
+                'p_dspin_clack',
+                dspin_data_size = parameter.Reference('memc_dspin_out_width')
+            ),
+        ],
+
+        instance_parameters = [
+            parameter.Module('mtp', 'common:mapping_table'),
+            parameter.Module('mtc', 'common:mapping_table'),
+            parameter.Module('mtx', 'common:mapping_table'),
+            parameter.IntTab('vci_ixr_index'),
+            parameter.IntTab('vci_ini_index'),
+            parameter.IntTab('vci_tgt_index'),
+            parameter.IntTab('vci_tgt_index_cleanup'),
+            parameter.Int   ('nways'),
+            parameter.Int   ('nsets'),
+            parameter.Int   ('nwords'),
+            parameter.Int   ('heap_size'),
+        ],
+)

@@ -1,0 +1,11 @@
+
+This directory contains a script aiming at using intensively the LL/SC table, making a lot of concurrent increments on some shared variables.
+
+For each test generated, a sequential native version is made and executed, so as to have a reference result of the test. It is then diff'ed with the output of the simulated version.
+
+The main script to execute is run_simus.sh in the scripts/ directory. Some of its parameters can be set inside it (e.g. the number of processors).
+
+The sub-directory LLSCTestGenerator contains the tool which generates the source files (1 for native sequential execution, 2 for simulated execution).
+
+The simulated application is compiled using DSX-VM.
+

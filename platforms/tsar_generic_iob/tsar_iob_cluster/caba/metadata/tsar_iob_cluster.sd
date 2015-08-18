@@ -1,0 +1,138 @@
+
+# -*- python -*-
+
+Module('caba:tsar_iob_cluster',
+    classname = 'soclib::caba::TsarIobCluster',
+
+    tmpl_parameters = [
+        parameter.Module('vci_param_int', default = 'caba:vci_param', 
+                          cell_size = parameter.Reference('vci_data_width_int')),
+        parameter.Module('vci_param_ext', default = 'caba:vci_param', 
+                          cell_size = parameter.Reference('vci_data_width_ext')),
+        parameter.Int('dspin_int_cmd_width'),
+        parameter.Int('dspin_int_rsp_width'),
+        parameter.Int('dspin_ram_cmd_width'),
+        parameter.Int('dspin_ram_rsp_width'),
+    ],
+
+    header_files = [ 
+        '../source/include/tsar_iob_cluster.h', 
+    ],
+
+    implementation_files = [ 
+        '../source/src/tsar_iob_cluster.cpp', 
+    ],
+
+    uses = [
+        Uses('caba:base_module'),
+        Uses('common:mapping_table'),
+        Uses('common:iss2'),
+        Uses('common:elf_file_loader'),
+        Uses('caba:coproc_signals'),
+
+        # internal network components
+        Uses('caba:vci_cc_vcache_wrapper', 
+              cell_size          = parameter.Reference('vci_data_width_int'),
+              dspin_in_width     = parameter.Reference('dspin_int_cmd_width'),
+              dspin_out_width    = parameter.Reference('dspin_int_rsp_width'),
+              iss_t              = 'common:gdb_iss', 
+              gdb_iss_t          = 'common:mips32el'),
+
+        Uses('caba:vci_mem_cache',
+              memc_cell_size_int   = parameter.Reference('vci_data_width_int'),
+              memc_cell_size_ext   = parameter.Reference('vci_data_width_ext'),
+              memc_dspin_in_width  = parameter.Reference('dspin_int_rsp_width'),
+              memc_dspin_out_width = parameter.Reference('dspin_int_cmd_width')),
+
+        Uses('caba:vci_xicu',
+              cell_size          = parameter.Reference('vci_data_width_int')),
+
+        Uses('caba:vci_mwmr_dma',
+              cell_size          = parameter.Reference('vci_data_width_int')),
+
+        Uses('caba:coproc_gcd'),
+        Uses('caba:coproc_dct'),
+        Uses('caba:coproc_cpy'),
+
+        Uses('caba:vci_local_crossbar', 
+              cell_size          = parameter.Reference('vci_data_width_int')),
+
+        Uses('caba:dspin_local_crossbar', 
+              flit_width         = parameter.Reference('dspin_int_cmd_width')),
+
+        Uses('caba:dspin_local_crossbar', 
+              flit_width         = parameter.Reference('dspin_int_rsp_width')),
+
+        Uses('caba:dspin_local_crossbar', 
+              flit_width         = parameter.Reference('dspin_ram_cmd_width')),
+
+        Uses('caba:dspin_local_crossbar', 
+              flit_width         = parameter.Reference('dspin_ram_rsp_width')),
+
+        Uses('caba:vci_dspin_initiator_wrapper', 
+              cell_size          = parameter.Reference('vci_data_width_int'),
+              dspin_cmd_width    = parameter.Reference('dspin_int_cmd_width'),
+              dspin_rsp_width    = parameter.Reference('dspin_int_rsp_width')),
+
+        Uses('caba:vci_dspin_target_wrapper',
+              cell_size          = parameter.Reference('vci_data_width_int'),
+              dspin_cmd_width    = parameter.Reference('dspin_int_cmd_width'),
+              dspin_rsp_width    = parameter.Reference('dspin_int_rsp_width')),
+
+        Uses('caba:dspin_router', 
+              flit_width         = parameter.Reference('dspin_int_cmd_width')),
+
+        Uses('caba:dspin_router', 
+              flit_width         = parameter.Reference('dspin_int_rsp_width')),
+
+        # RAM network components
+        Uses('caba:vci_dspin_initiator_wrapper', 
+              cell_size          = parameter.Reference('vci_data_width_ext'),
+              dspin_cmd_width    = parameter.Reference('dspin_ram_cmd_width'),
+              dspin_rsp_width    = parameter.Reference('dspin_ram_rsp_width')),
+
+        Uses('caba:vci_dspin_target_wrapper',
+              cell_size          = parameter.Reference('vci_data_width_ext'),
+              dspin_cmd_width    = parameter.Reference('dspin_ram_cmd_width'),
+              dspin_rsp_width    = parameter.Reference('dspin_ram_rsp_width')),
+
+        Uses('caba:dspin_router', 
+              flit_width         = parameter.Reference('dspin_ram_cmd_width')),
+
+        Uses('caba:dspin_router', 
+              flit_width         = parameter.Reference('dspin_ram_rsp_width')),
+
+        Uses('caba:vci_simple_ram',
+              cell_size          = parameter.Reference('vci_data_width_ext')),
+
+        # IOX network components
+        Uses('caba:vci_io_bridge', 
+              iob_cell_size_int  = parameter.Reference('vci_data_width_int'),
+              iob_cell_size_ext  = parameter.Reference('vci_data_width_ext')),
+        ],
+
+    ports = [
+        Port('caba:bit_in', 'p_resetn', auto = 'resetn'),
+        Port('caba:clock_in', 'p_clk', auto = 'clock'),
+
+        Port('caba:dspin_output', 'p_int_cmd_out', [4, 3], 
+              dspin_data_size = parameter.Reference('dspin_int_cmd_width')),
+        Port('caba:dspin_input', 'p_int_cmd_in', [4, 3], 
+              dspin_data_size = parameter.Reference('dspin_int_cmd_width')),
+        Port('caba:dspin_output', 'p_int_rsp_out', [4, 2], 
+              dspin_data_size = parameter.Reference('dspin_int_rsp_width')), 
+        Port('caba:dspin_input', 'p_int_rsp_in', [4, 2], 
+              dspin_data_size = parameter.Reference('dspin_int_rsp_width')),
+
+        Port('caba:dspin_output', 'p_ram_cmd_out', [4], 
+              dspin_data_size = parameter.Reference('dspin_ram_cmd_width')),
+        Port('caba:dspin_input', 'p_ram_cmd_in', [4], 
+              dspin_data_size = parameter.Reference('dspin_ram_cmd_width')),
+        Port('caba:dspin_output', 'p_ram_rsp_out', [4], 
+              dspin_data_size = parameter.Reference('dspin_ram_rsp_width')), 
+        Port('caba:dspin_input', 'p_ram_rsp_in', [4], 
+              dspin_data_size = parameter.Reference('dspin_ram_rsp_width')),
+        ],
+)
+
+

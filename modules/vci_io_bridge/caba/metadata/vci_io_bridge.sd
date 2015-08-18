@@ -1,0 +1,66 @@
+
+# -*- python -*-
+
+__id__ = "$Id: vci_io_bridge.sd 20 2012-6-11 $"
+
+Module('caba:vci_io_bridge',
+    classname = 'soclib::caba::VciIoBridge',
+
+    tmpl_parameters = [
+        parameter.Module('vci_param_int',
+                          default = 'caba:vci_param',
+                          cell_size = parameter.Reference('iob_cell_size_int')),
+        parameter.Module('vci_param_ext',
+                          default = 'caba:vci_param',
+                          cell_size = parameter.Reference('iob_cell_size_ext')),
+    ],
+
+    header_files =         [
+        '../source/include/vci_io_bridge.h',
+        '../source/include/transaction_tab_io.h'
+    ],
+
+    implementation_files = [ '../source/src/vci_io_bridge.cpp' ],
+
+    uses = [ Uses('caba:base_module'),
+        Uses('common:mapping_table'),
+        Uses('caba:generic_fifo'),
+        Uses('caba:generic_tlb',
+              addr_t = parameter.StringExt('sc_dt::sc_uint<%d> ',
+              parameter.Reference('addr_size'))),
+        Uses('common:address_decoding_table',
+              input_t  = 'unsigned long',
+              output_t = 'bool'),
+        Uses('common:address_decoding_table',
+              input_t  = 'unsigned long',
+              output_t = 'int'),
+    ],
+
+    ports = [
+        Port('caba:vci_initiator', 'p_vci_ini_ram'),
+        Port('caba:vci_target',    'p_vci_tgt_iox'),
+        Port('caba:vci_initiator', 'p_vci_ini_iox'),
+        Port('caba:vci_target',    'p_vci_tgt_int'),
+        Port('caba:vci_initiator', 'p_vci_ini_int'),
+        Port('caba:bit_in','p_irq', 32),
+        Port('caba:bit_in', 'p_resetn', auto = 'resetn'),
+        Port('caba:clock_in', 'p_clk', auto = 'clock'),
+    ],
+
+    instance_parameters = [
+        parameter.Module('mt_ext', 'common:mapping_table'),
+        parameter.Module('mt_int', 'common:mapping_table'),
+        parameter.Module('mt_iox', 'common:mapping_table'),
+        parameter.IntTab('int_tgtid'),
+        parameter.IntTab('int_srcid'),
+        parameter.IntTab('iox_tgtid'),
+        parameter.IntTab('iox_srcid'),
+        parameter.IntTab('ext_srcid'),
+        parameter.Int('dcache_words'),
+        parameter.Int('iotlb_ways'),
+        parameter.Int('iotlb_sets'),
+        parameter.Int('debug_start_cycle'),
+        parameter.Bool('debug_ok'),
+    ],
+)
+

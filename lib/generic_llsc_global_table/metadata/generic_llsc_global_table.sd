@@ -1,0 +1,13 @@
+# -*- python -*-
+
+Module(
+    'caba:generic_llsc_global_table',
+    classname       = 'soclib::GenericLLSCGlobalTable',
+    header_files    = ['../include/generic_llsc_global_table.h'],
+    tmpl_parameters = 
+        [
+            parameter.Int('nb_slots', min = 2, max = 64, default = 32),
+            parameter.Int('nb_procs', min = 2, max = 4096, default = 4095), # default should be 4096, but soclib-cc problem
+            parameter.Type('addr_t', default = 'sc_dt::sc_uint<40>')
+        ]
+)

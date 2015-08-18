@@ -1,0 +1,12 @@
+#!/bin/sh 
+
+make --quiet || exit 1
+../platform/simulation.x > run.out 2>&1 
+if [ $? -eq 0 ]; then
+	echo "test passsed";
+	make --quiet clean
+	exit 0;
+fi
+echo "test failed"
+exit 1
+

@@ -1,0 +1,10 @@
+This files describes the differences between vci_ethernet_tsar and
+vci_ethernet
+
+* Added f->wr_req->setPacket(0x4); for every Write command from vci_ethernet in
+  order to respect overloading of vci CMD in pktid of Tsar architecture
+
+* Added overlapping detection in read and write vci CMD. First, vci CMD is now
+  made at maximum with the boundary of a cache line (64 alignement)
+
+* Added set and reset for IRQ lines enable

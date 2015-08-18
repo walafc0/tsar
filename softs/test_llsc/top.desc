@@ -1,0 +1,46 @@
+
+# -*- python -*-
+
+# internal VCI parameters values
+vci_cell_size_int   = 4
+vci_cell_size_ext   = 8
+
+vci_plen_size       = 8
+vci_addr_size       = 40
+vci_rerror_size     = 1
+vci_clen_size       = 1
+vci_rflag_size      = 1
+vci_srcid_size      = 14
+vci_pktid_size      = 4
+vci_trdid_size      = 4
+vci_wrplen_size     = 1
+
+# DSPIN network parameters values
+dspin_cmd_flit_size     = 39
+dspin_rsp_flit_size     = 32
+
+todo = Platform('caba', 'top.cpp',
+
+   uses = [
+            Uses('caba:tsar_xbar_cluster', 
+                  vci_data_width_int = vci_cell_size_int,
+                  vci_data_width_ext = vci_cell_size_ext,
+                  dspin_cmd_width    = dspin_cmd_flit_size,
+                  dspin_rsp_width    = dspin_rsp_flit_size),
+
+            Uses('common:elf_file_loader'),
+            Uses('common:plain_file_loader'),
+           ],
+
+   # default VCI parameters (global variables)
+   cell_size   = vci_cell_size_int,  
+	plen_size   = vci_plen_size,
+	addr_size   = vci_addr_size,
+	rerror_size = vci_rerror_size,
+	clen_size   = vci_clen_size,
+	rflag_size  = vci_rflag_size,
+	srcid_size  = vci_srcid_size,
+	pktid_size  = vci_pktid_size,
+	trdid_size  = vci_trdid_size,
+	wrplen_size = vci_wrplen_size,
+)

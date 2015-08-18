@@ -1,0 +1,94 @@
+
+# -*- python -*-
+
+# VCI parameters 
+vci_cell_size_int   = 4
+vci_cell_size_ext   = 8
+
+vci_plen_size       = 8
+vci_addr_size       = 40
+vci_rerror_size     = 1
+vci_clen_size       = 1
+vci_rflag_size      = 1
+vci_srcid_size      = 14
+vci_pktid_size      = 4
+vci_trdid_size      = 4
+vci_wrplen_size     = 1
+
+# internal DSPIN network parameters 
+int_dspin_cmd_flit_size = 39
+int_dspin_rsp_flit_size = 32
+
+# external DSPIN network parameters
+ram_dspin_cmd_flit_size = 64
+ram_dspin_rsp_flit_size = 64
+
+todo = Platform('caba', 'top.cpp',
+
+	uses = [
+            # cluster
+            Uses('caba:tsar_iob_cluster', 
+                  vci_data_width_int  = vci_cell_size_int,
+                  vci_data_width_ext  = vci_cell_size_ext, 
+                  dspin_int_cmd_width = int_dspin_cmd_flit_size,
+                  dspin_int_rsp_width = int_dspin_rsp_flit_size,
+                  dspin_ram_cmd_width = ram_dspin_cmd_flit_size,
+                  dspin_ram_rsp_width = ram_dspin_rsp_flit_size),
+                  
+            # IOX Network
+            Uses('caba:vci_iox_network', 
+                  cell_size = vci_cell_size_ext),
+
+            # ROM
+            Uses('caba:vci_simple_rom', 
+                  cell_size   = vci_cell_size_ext),
+
+            # Frame Buffer
+            Uses('caba:vci_framebuffer', 
+                  cell_size = vci_cell_size_ext),
+
+            # Block Device
+            Uses('caba:vci_block_device_tsar', 
+                  cell_size = vci_cell_size_ext),
+
+            Uses('caba:vci_multi_ahci',
+                  cell_size = vci_cell_size_ext),
+
+            Uses('caba:vci_ahci_sdc',
+                  cell_size = vci_cell_size_ext),
+
+            Uses('caba:sd_card'),
+
+            # NIC 
+            Uses('caba:vci_multi_nic', 
+                  cell_size = vci_cell_size_ext),
+
+            # Chained DMA
+            Uses('caba:vci_chbuf_dma', 
+                  cell_size = vci_cell_size_ext),
+
+            # TTY
+            Uses('caba:vci_multi_tty', 
+                  cell_size = vci_cell_size_ext),
+
+            # IOPIC
+            Uses('caba:vci_iopic', 
+                  cell_size = vci_cell_size_ext),
+
+	        Uses('common:elf_file_loader'),
+            Uses('common:plain_file_loader'),
+           ],
+
+    # default VCI parameters (global variables)
+    cell_size   = vci_cell_size_int,  
+	plen_size   = vci_plen_size,
+	addr_size   = vci_addr_size,
+	rerror_size = vci_rerror_size,
+	clen_size   = vci_clen_size,
+	rflag_size  = vci_rflag_size,
+	srcid_size  = vci_srcid_size,
+	pktid_size  = vci_pktid_size,
+	trdid_size  = vci_trdid_size,
+	wrplen_size = vci_wrplen_size,
+
+)

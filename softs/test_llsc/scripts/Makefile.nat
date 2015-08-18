@@ -1,0 +1,6 @@
+
+all: test_natif
+
+test_natif: test_llsc.c
+	gcc -o $@ $<
+

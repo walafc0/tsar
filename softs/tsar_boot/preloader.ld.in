@@ -1,0 +1,45 @@
+/**
+ * \file   : preloader.ld.in
+ * \author : Cesar Fuguet
+ * \date   : July 24, 2014
+ *
+ * \brief  : preloader ldscript template
+ * \note   : must be compiled with gcc to generate an instance
+ */
+
+#include <defs.h>
+
+/* Definition of the base address for code segment */
+
+seg_code_base = RESET_ADDRESS;
+seg_data_base = SEG_RAM_BASE + SEG_RAM_SIZE - RESET_STACK_SIZE - 0x4000;
+
+/* Grouping sections into segments */
+
+ENTRY(reset)
+
+SECTIONS
+{
+    . = seg_code_base;
+    .text :
+    {
+        *(.reset)
+        *(.text)
+        . = ALIGN(0x4);
+        dtb_start = .;
+#if USE_DT == 1
+        INCLUDE "build/platform.ld";
+#endif
+        dtb_end = .;
+        *(.rodata)
+        *(.rodata.*)
+    }
+
+    . = seg_data_base;
+    .bss ALIGN(0x4) (NOLOAD) :
+    {
+        *(.data)
+        *(.bss)
+        *(COMMON)
+    }
+}

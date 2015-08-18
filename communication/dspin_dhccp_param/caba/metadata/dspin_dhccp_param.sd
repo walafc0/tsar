@@ -1,0 +1,4 @@
+Module('caba:dspin_dhccp_param',
+	   classname = 'soclib::caba::DspinDhccpParam',
+	   header_files = ['../source/include/dspin_dhccp_param.h',]
+)

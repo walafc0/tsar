@@ -1,0 +1,53 @@
+
+# -*- python -*-
+
+Module('caba:vci_spi',
+	   classname = 'soclib::caba::VciSpi',
+
+        tmpl_parameters = [ 
+           parameter.Module('vci_param',  default = 'caba:vci_param'), 
+        ],
+
+        header_files = [
+            '../source/include/vci_spi.h', 
+        ],
+
+        interface_files = [
+            '../../include/soclib/vcispi.h', 
+        ],
+
+        implementation_files = [
+            '../source/src/vci_spi.cpp',
+        ],
+
+        ports = [
+		    Port('caba:vci_target', 'p_vci_target'),
+		    Port('caba:vci_initiator', 'p_vci_initiator'),
+		    Port('caba:bit_out', 'p_irq'),
+		    Port('caba:bit_out', 'p_spi_clk'),
+		    Port('caba:bit_out', 'p_spi_ss'),
+		    Port('caba:bit_out', 'p_spi_mosi'),
+		    Port('caba:bit_in',  'p_spi_miso'),
+		    Port('caba:bit_in',   'p_resetn', auto = 'resetn'),
+		    Port('caba:clock_in', 'p_clk', auto = 'clock'), 
+		],
+
+        uses = [
+		    Uses('caba:base_module'),
+                    Uses('common:mapping_table'),
+		    Uses('caba:generic_fifo'),
+		],
+
+        instance_parameters = [
+        	parameter.Module('mt', typename = 'common:mapping_table', auto = 'env:mapping_table'),
+        	parameter.IntTab('srcid'),
+        	parameter.IntTab('tgtid'),
+		parameter.Int('burst_size'),
+        ],
+
+	    extensions = [
+		    'dsx:addressable=tgtid',
+		    'dsx:max_segments=1',
+		    'dsx:get_ident=tgtid:p_vci_target:mt,srcid:p_vci_initiator:mt',
+		],
+)

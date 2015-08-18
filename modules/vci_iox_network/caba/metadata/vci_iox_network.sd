@@ -1,0 +1,44 @@
+
+# -*- python -*-
+
+Module('caba:vci_iox_network',
+	classname = 'soclib::caba::VciIoxNetwork',
+
+    tmpl_parameters = [
+	    parameter.Module('vci_param',  default = 'caba:vci_param'),
+	],
+
+    header_files = [
+        '../source/include/vci_iox_network.h',
+    ],
+
+    implementation_files = [
+        '../source/src/vci_iox_network.cpp',
+    ],
+
+    ports = [
+	    Port('caba:vci_initiator', 'p_to_local_tgt', parameter.Reference('nb_local_tgt')),
+	    Port('caba:vci_target',    'p_to_local_ini', parameter.Reference('nb_local_ini')),
+	    Port('caba:vci_initiator', 'p_to_global_tgt', parameter.Reference('nb_global_tgt')),
+	    Port('caba:vci_target',    'p_to_global_ini', parameter.Reference('nb_global_ini')),
+		Port('caba:bit_in',        'p_resetn', auto = 'resetn'),
+		Port('caba:clock_in',      'p_clk', auto = 'clock'),
+	],
+
+    instance_parameters = [
+        parameter.Module('mt', typename = 'common:mapping_table'),
+        parameter.Int('cluster_id'),
+        parameter.Int('nb_local_tgt'),
+        parameter.Int('nb_local_ini'),
+        parameter.Int('nb_global_tgt'),
+        parameter.Int('nb_global_ini'),
+	],
+
+    uses = [
+		Uses('caba:base_module'),
+		Uses('common:mapping_table'),
+		Uses('common:address_decoding_table', input_t = 'uint64_t', output_t = 'size_t'),
+		Uses('common:address_decoding_table', input_t = 'uint32_t', output_t = 'size_t'),
+		Uses('caba:vci_buffers'),
+	],
+)

@@ -1,0 +1,33 @@
+
+# -*- python -*-
+
+Module('caba:sdmmc',
+	classname = 'soclib::caba::SdMMC',
+
+        header_files = [
+            '../source/include/sdmmc.h', 
+        ],
+
+        implementation_files = [
+            '../source/src/sdmmc.cpp',
+        ],
+
+        ports = [
+		    Port('caba:bit_in', 'p_spi_clk'),
+		    Port('caba:bit_in', 'p_spi_ss'),
+		    Port('caba:bit_in', 'p_spi_mosi'),
+		    Port('caba:bit_out', 'p_spi_miso'),
+		    Port('caba:bit_in',   'p_resetn', auto = 'resetn'),
+		    Port('caba:clock_in', 'p_clk', auto = 'clock'), 
+		],
+
+        uses = [
+		    Uses('caba:base_module'),
+		],
+
+        instance_parameters = [
+        	parameter.String('filename'),
+		parameter.Int('latency'),
+        ],
+
+)

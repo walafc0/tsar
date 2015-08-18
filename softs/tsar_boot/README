@@ -1,0 +1,82 @@
+\author: Cesar Fuguet
+\date  : July 24, 2014
+
+TSAR BOOT-LOADER
+
+Files:
+src/        Source files
+            The entry point of this boot loader is the file reset.S
+
+include/    Header files
+
+driver/     Drivers source files and headers
+
+conf/       Platform specific files
+
+            For each platform, we must define a new directory.
+            Mandatory files:
+
+              - hard_config.h (can be generated using giet-vm genmap tool)
+
+                This file contains all physical segments addresses and sizes of
+                the hardware platform. It also contains other configuration
+                definitions as the disk controller type, mesh size, etc.
+                Examples can be found in the conf/ directory.
+
+            Optional files:
+
+              - platform.dts (platform device tree)
+
+Makefile    Makefile to compile the boot loader.
+            Mandatory arguments:
+
+              - HARD_CONFIG_PATH=<platform_dir>
+
+                Defines the directory where to find the hard_config.h file
+
+           Optional arguments:
+
+              - USE_DT=<value>
+
+                Value can be 1 or 0. If a device tree file is not used, set
+                this flag to 0. It is set by default to 1.
+
+              - SYSTEM_CLK=<platform clock frequency>
+
+                Platform clock frequency in KHz
+
+              - DTS=<file.dts>
+
+                Platform device tree (by default is platform.dts)
+
+Important characteristics of this preloader:
+
+  - Processor 0 performs loading of Operating System Boot Loader which must
+    be an ELF file located at the third block of the disk.
+
+  - Other processors wait to be waken up through an interruption generated
+    from a XICU mailbox. Each processor other than 0 has its own mailbox
+    in the local XICU.
+
+  - Stack allocation is only made for processor 0. The loaded Operating System
+    boot loader or kernel must perform stack allocation for other processors.
+
+  - Stack for processor 0 is allocated at the end of RAM segment in the cluster
+    (0,0).
+
+Examples:
+
+    make HARD_CONFIG_PATH=<platform_dir> USE_DT=0
+
+        Compile for <platform_dir> and do not compile device tree file
+
+    make HARD_CONFIG_PATH=<platform_dir> DTS=platform_fpga.dts SYSTEM_CLK=25000
+
+        Compile for <platform_dir> and compile the 'platform_dpga.dts'
+        device tree file. System clock frequency is 25 MHz
+
+    make HARD_CONFIG_PATH=<platform_conf> SYSTEM_CLK=25000
+
+        Compile for <platform_dir> and compile the 'platform.dts'
+        device tree file (default name). System clock frequency is 25 MHz
+

@@ -1,0 +1,62 @@
+April 2014, Joel Porquet
+
+This platform is known for being able to run Linux.
+
+----
+Pre-requisites:
+
+* A working version of SoCLib (r2558)
+    - the command `soclib-cc --getpath` should return where SoCLib is
+      installed
+* A working version of TSAR (r668)
+    - TSAR directory should be properly added to SoCLib's configuration:
+      either globally, or through the `soclib.conf` file present in this
+      directory (in which case, the environment variable `TSARDIR` should be
+      defined to point on TSAR directory)
+
+
+----
+Targets of the Makefile:
+
+* clean: clean the compilation files
+* all (or none): compile the simulation system
+* run_tsar_boot: runs the simulation system using a boot loader (in this case,
+  you want to use a blockdevice image that contains the kernel: see `DSK`
+  option below)
+* run_dummy_boot: runs the simulation system using directly Linux instead of a
+  boot loader (i.e. Linux is already loaded in RAM before execution).
+
+
+----
+Options for running:
+
+These options apply when using either `run_tsar_boot` or `run_dummy_boot`
+targets. Example: `make run_dummy_boot GDB=1 VMLINUX=../vmlinux DSK=dsk.img`
+
+* GDB=1|[FXSCTZW]: options to the GDB server (1 means FCX which is a good
+  default)
+* NCPUS=[1-4]: number of processors (the default is 4)
+* DSK=[pathname]: path to a filesystem to use with the BlockDevice component
+  (also implies creating a system with such a component, otherwise the
+  component is deactivated)
+* TRACE=[number]: enables tracing the simulation starting from a certain cycle
+* NCYCLES=[number]: runs the simulation for a certain number of cycles
+
+    Only for run_dummy_boot:
+    * VMLINUX=[pathname]: path to Linux `vmlinux` image
+
+
+----
+Using GDB server:
+
+A file named `.gdbinit` contains a few macros that can be useful for debugging
+Linux when using the GDB server.
+
+* connect: connect to the GDB server that runs within the simulation
+* dmesg: print the content of the kernel message buffer
+* thread_info: print the thread_info structure of the current task
+* task_struct: print the task_struct structure of the current task
+* active_mm: print the active_mm structure of the current task
+* pgd: print the content of the page table of the current task
+* ps: print the list of running tasks
+

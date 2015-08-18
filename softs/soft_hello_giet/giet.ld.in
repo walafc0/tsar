@@ -1,0 +1,79 @@
+/**
+ * \file   : giet.ld.in
+ * \author : Cesar Fuguet
+ * \date   : September 19, 2014
+ *
+ * \brief  : giet ldscript template
+ * \note   : must be compiled with gcc to generate an instance
+ */
+
+#include <hard_config.h>
+
+seg_reset_base   = RESET_ADDRESS;           /* boot code                   */
+
+seg_kcode_base   = SEG_RAM_BASE + 0x10000;  /* kernel code                 */
+seg_kdata_base   = SEG_RAM_BASE + 0x20000;  /* kernel cacheable data       */
+seg_kunc_base    = SEG_RAM_BASE + 0x30000;  /* kernel uncacheable data     */
+seg_code_base    = SEG_RAM_BASE + 0x40000;  /* application code            */
+seg_data_base    = SEG_RAM_BASE + 0x50000;  /* application data            */
+seg_heap_base    = SEG_RAM_BASE + 0x100000; /* heaps for applications      */
+seg_stack_base   = SEG_RAM_BASE + 0x300000; /* stacks ifor applications    */
+seg_ramdisk_base = SEG_RAM_BASE + 0x800000; /* virtual disk                */
+
+seg_xcu_base     = SEG_XCU_BASE;            /* controler XCU               */
+seg_tty_base     = SEG_TTY_BASE;            /* controler TTY               */
+seg_fbf_base     = SEG_FBF_BASE;            /* controler FBF               */
+seg_ioc_base     = SEG_IOC_BASE;            /* controler IOC               */
+seg_nic_base     = SEG_NIC_BASE;            /* controler NIC               */
+seg_cma_base     = SEG_CMA_BASE;            /* controler CMA               */
+seg_pic_base     = SEG_PIC_BASE;            /* controler PIC               */
+seg_mmc_base     = SEG_MMC_BASE;            /* config    MMC               */
+
+/* Grouping sections into segments */
+
+ENTRY(reset)
+
+SECTIONS
+{
+   . = seg_kcode_base;
+   seg_kcode : {
+      *(.giet)
+      *(.switch)
+      *(.drivers)
+      *(.isr)
+   }
+   . = seg_kdata_base;
+   seg_kdata : {
+      *(.kdata)
+   }
+   . = seg_kunc_base;
+   seg_kunc : {
+      *(.unckdata)
+   }
+   . = seg_kdata_base;
+   seg_kdata : {
+      *(.ksave)
+   }
+   . = seg_code_base;
+   seg_code : {
+      *(.text)
+   }
+   . = seg_reset_base;
+   seg_reset : {
+      *(.reset)
+   }
+   . = seg_data_base;
+   seg_data : {
+      *(.rodata)
+      . = ALIGN(4);
+      *(.rodata.*)
+      . = ALIGN(4);
+      *(.data)
+      . = ALIGN(4);
+      *(.sdata)
+      . = ALIGN(4);
+      *(.bss)
+      *(COMMON)
+      *(.sbss)
+   }
+}

@@ -1,0 +1,47 @@
+dspin_cmd_flit_size     = 39
+dspin_rsp_flit_size     = 32
+cell_size               = 4
+
+todo = Platform('caba', 'top.cpp',
+        uses = [
+            Uses('caba:vci_cc_vcache_wrapper',
+                dspin_in_width = dspin_cmd_flit_size,
+                dspin_out_width = dspin_rsp_flit_size,
+                iss_t = 'common:mips32el'),
+            Uses('caba:vci_cc_vcache_wrapper',
+                dspin_in_width = dspin_cmd_flit_size,
+                dspin_out_width = dspin_rsp_flit_size,
+                iss_t = 'common:gdb_iss',
+                gdb_iss_t = 'common:mips32el'),
+            Uses('caba:vci_simple_ram'),
+            Uses('caba:vci_simple_ram', cell_size = 8),
+            Uses('caba:vci_xicu'),
+            Uses('caba:vci_multi_tty'),
+            Uses('caba:vci_block_device_tsar'),
+            Uses('caba:vci_framebuffer'),
+            Uses('caba:vci_mem_cache',
+                memc_cell_size_int = cell_size,
+                memc_cell_size_ext = 8,
+                memc_dspin_out_width = dspin_cmd_flit_size,
+                memc_dspin_in_width = dspin_rsp_flit_size,
+                ),
+            Uses('caba:dspin_local_crossbar',
+                flit_width      =  dspin_cmd_flit_size),
+            Uses('caba:dspin_local_crossbar',
+                flit_width      = dspin_rsp_flit_size),
+            Uses('caba:vci_local_crossbar',
+                cell_size       = cell_size),
+            Uses('common:elf_file_loader'),
+            ],
+        cell_size = cell_size,
+        plen_size = 8,
+        addr_size = 40,
+        rerror_size = 1,
+        clen_size = 1,
+        rflag_size = 1,
+        srcid_size = 14,
+        pktid_size = 4,
+        trdid_size = 4,
+        wrplen_size = 1
+        )
+
